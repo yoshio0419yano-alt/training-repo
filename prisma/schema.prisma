@@ -1,0 +1,38 @@
+// このファイルはスターターです。
+// User モデル（GitHub OAuth認証用）のみ用意してあります。
+//
+// Project / Task / Comment、および担当者アサインのためのリレーションは、
+// Module 4（設計フェーズ）で docs/requirements.md をもとに Claude Code と
+// 一緒に設計し、ここに追加してください。
+//
+// 設計の際に検討してほしい観点（docs/requirements.md も参照）：
+//   - タスクのステータスをどう表現するか（enumか、文字列か）
+//   - タグをどう持たせるか（多対多の中間テーブルが必要か）
+//   - 担当者アサインは1人だけか、複数人を許容するか
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  githubId  String   @unique
+  name      String?
+  email     String?  @unique
+  image     String?
+  createdAt DateTime @default(now())
+
+  // TODO(Module 4): Project / Task とのリレーションをここに追加する
+  // 例: ownedProjects Project[]
+  // 例: assignedTasks Task[]
+}
+
+// TODO(Module 4): 以下のモデルを設計して追加する
+// model Project { ... }
+// model Task { ... }
+// model Comment { ... }
