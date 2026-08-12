@@ -1,6 +1,6 @@
 # CLAUDE.md（スターター）
 
-このファイルはModule 3の演習で完成させます。
+このファイルは第2章の演習で完成させます。
 `docs/claude-md-templates/before.md` と `after.md` を参考に、以下の項目を埋めてください。
 
 ## プロジェクト概要
