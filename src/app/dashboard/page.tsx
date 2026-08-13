@@ -106,7 +106,12 @@ export default async function DashboardPage({
               )}
               {tasksByStatus[status].map((task) => (
                 <li key={task.id} className="rounded border border-gray-100 p-2 text-sm">
-                  <p className="font-medium text-gray-900">{task.title}</p>
+                  <Link
+                    href={`/dashboard/tasks/${task.id}`}
+                    className="font-medium text-gray-900 hover:underline"
+                  >
+                    {task.title}
+                  </Link>
                   <p className="mt-1 text-xs text-gray-500">
                     担当者：{task.assignee?.name ?? "未アサイン"}
                   </p>
