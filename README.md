@@ -19,6 +19,28 @@ cp .env.example .env
 npm install
 ```
 
+## 認証機能について（重要）
+
+GitHubログインは **すでに実装済み** です。研修の演習対象ではありません。
+みなさんは `.env` に GitHub OAuth App の情報を設定するだけで利用できます。
+
+設定手順は「受講者用演習手順書」の第1章 STEP8 に記載しています。概要は次のとおりです。
+
+1. GitHub の Settings → Developer settings → OAuth Apps → New OAuth App を開く
+2. Authorization callback URL に `http://localhost:3000/api/auth/callback/github` を設定
+3. 発行された Client ID と Client Secret を `.env` の `GITHUB_ID` / `GITHUB_SECRET` に設定
+4. `NEXTAUTH_SECRET` を生成して設定
+
+実装済みのファイル（変更不要）:
+
+- `src/lib/auth.ts` — 認証設定
+- `src/lib/prisma.ts` — Prisma Client
+- `src/app/api/auth/[...nextauth]/route.ts` — 認証APIルート
+- `src/components/providers.tsx`, `src/components/auth-buttons.tsx` — ログインUI
+
+ログインしたユーザーは `User` テーブルに登録されます。第3章で担当者アサインを設計する際は、
+この `User` モデルとの関連を考えることになります。
+
 ## リポジトリ構成
 
 ```
@@ -35,7 +57,8 @@ npm install
 │   └── schema.prisma             # DBスキーマのスターター（User以外は受講者が第3章で設計）
 ├── src/
 │   ├── app/                      # Next.js App Router（雛形のみ。主要機能は第3章で実装）
-│   └── lib/                      # 共通ロジック置き場（空。第3章以降で追加）
+│   ├── components/               # 認証UI（実装済み・演習対象外）
+│   └── lib/                      # prisma.ts / auth.ts は実装済み。第3章以降で追加していく
 └── exercises/
     └── debug-task-status/        # 第4章のデバッグ演習用（意図的にバグを仕込んだ独立モジュール）
 ```

@@ -1,5 +1,8 @@
 // このファイルはスターターです。
-// User モデル（GitHub OAuth認証用）のみ用意してあります。
+//
+// User モデルは【実装済みの認証機能】が使用するため、すでに用意してあります。
+// 変更する場合は、src/lib/auth.ts の処理と整合が取れているか確認してください。
+// （githubId は認証処理がユーザーを特定するために使っています）
 //
 // Project / Task / Comment、および担当者アサインのためのリレーションは、
 // 第3章（設計と実装）で docs/requirements.md をもとに Claude Code と
@@ -26,6 +29,7 @@ model User {
   email     String?  @unique
   image     String?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // TODO(第3章): Project / Task とのリレーションをここに追加する
   // 例: ownedProjects Project[]
