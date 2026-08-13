@@ -1,17 +1,8 @@
-// このファイルはスターターです。
+// このスキーマは docs/design-memo.md（docs/requirements.md を踏まえた設計決定）に基づく。
 //
-// User モデルは【実装済みの認証機能】が使用するため、すでに用意してあります。
-// 変更する場合は、src/lib/auth.ts の処理と整合が取れているか確認してください。
-// （githubId は認証処理がユーザーを特定するために使っています）
-//
-// Project / Task / Comment、および担当者アサインのためのリレーションは、
-// 第3章（設計と実装）で docs/requirements.md をもとに Claude Code と
-// 一緒に設計し、ここに追加してください。
-//
-// 設計の際に検討してほしい観点（docs/requirements.md も参照）：
-//   - タスクのステータスをどう表現するか（enumか、文字列か）
-//   - タグをどう持たせるか（多対多の中間テーブルが必要か）
-//   - 担当者アサインは1人だけか、複数人を許容するか
+// User モデルの既存フィールド（id/githubId/name/email/image/createdAt/updatedAt）は
+// 【実装済みの認証機能】が使用するため変更していない（src/lib/auth.ts が githubId で
+// ユーザーを特定している）。User には他モデルからの逆参照のみを追加した。
 
 generator client {
   provider = "prisma-client-js"
@@ -31,12 +22,105 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // TODO(第3章): Project / Task とのリレーションをここに追加する
-  // 例: ownedProjects Project[]
-  // 例: assignedTasks Task[]
+  teamMemberships TeamMembership[]
+  projectMembers  ProjectMember[]
+  assignedTasks   Task[]
+  comments        Comment[]
 }
 
-// TODO(第3章): 以下のモデルを設計して追加する
-// model Project { ... }
-// model Task { ... }
-// model Comment { ... }
+// 複数チーム対応（design-memo 1.）。ロールはチーム単位で持つ（design-memo 14.）。
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships TeamMembership[]
+  projects    Project[]
+}
+
+enum TeamRole {
+  ADMIN
+  MEMBER
+}
+
+model TeamMembership {
+  id        String   @id @default(cuid())
+  teamId    String
+  userId    String
+  role      TeamRole @default(MEMBER)
+  createdAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([teamId, userId])
+}
+
+// プロジェクトは必ず1つのTeamに属する（design-memo 1.）。
+// archivedAt で論理削除／非表示を表す（design-memo 8.）。
+model Project {
+  id          String    @id @default(cuid())
+  teamId      String
+  name        String
+  description String?
+  archivedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  team    Team            @relation(fields: [teamId], references: [id])
+  members ProjectMember[]
+  tasks   Task[]
+}
+
+// プロジェクトへの参加。一覧の絞り込み・編集権限・担当者候補の判定に使う（design-memo 2., 3.）。
+// プロジェクト単位のロールは持たない（ロールはTeamMembershipのみ）。
+model ProjectMember {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([projectId, userId])
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+// 担当者は1人まで・nullable（design-memo 3.）。
+// 「担当者はプロジェクト参加者に限る」という制約はAPIルート側で検証する。
+// タグは自由入力のため、専用テーブルを設けずスカラー配列として持つ（design-memo 5., 10.）。
+model Task {
+  id          String     @id @default(cuid())
+  projectId   String
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  tags        String[]
+  assigneeId  String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  project  Project   @relation(fields: [projectId], references: [id])
+  assignee User?     @relation(fields: [assigneeId], references: [id])
+  comments Comment[]
+}
+
+// 編集・削除は投稿者以外も含め誰でも可のため、権限チェックはAPIルート側で行う（design-memo 6.）。
+model Comment {
+  id        String   @id @default(cuid())
+  taskId    String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task   Task @relation(fields: [taskId], references: [id])
+  author User @relation(fields: [authorId], references: [id])
+}

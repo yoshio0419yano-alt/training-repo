@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "ask": [
+      "Bash(rm *)",
+      "Bash(rmdir *)",
+      "Bash(unlink *)",
+      "Bash(git clean*)",
+      "Bash(git rm *)",
+      "PowerShell(Remove-Item *)",
+      "PowerShell(rm *)",
+      "PowerShell(rmdir *)",
+      "PowerShell(del *)",
+
+      "Bash(*prisma migrate reset*)",
+      "Bash(*prisma db push*--force-reset*)",
+      "Bash(*DROP TABLE*)",
+      "Bash(*TRUNCATE*)",
+      "Bash(*DELETE FROM*)",
+      "PowerShell(*prisma migrate reset*)",
+      "PowerShell(*prisma db push*--force-reset*)",
+      "PowerShell(*DROP TABLE*)",
+      "PowerShell(*TRUNCATE*)",
+      "PowerShell(*DELETE FROM*)",
+
+      "Read(.env)",
+      "Read(.env.local)",
+      "Read(.env.production)",
+      "Bash(cat .env)",
+      "Bash(cat .env.local)",
+      "Bash(type .env)",
+      "PowerShell(Get-Content .env)",
+      "PowerShell(cat .env)"
+    ]
+  }
+}

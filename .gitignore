@@ -23,6 +23,9 @@ prisma/dev.db
 .vscode/*
 !.vscode/extensions.json
 
+# claude code（個人設定は共有しない。.claude/settings.jsonはチーム共有のため対象外）
+.claude/settings.local.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
