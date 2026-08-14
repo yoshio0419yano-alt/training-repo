@@ -26,14 +26,18 @@ export function CommentForm({ taskId }: { taskId: string }) {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(
-          typeof data.error === "string" ? data.error : "コメントの投稿に失敗しました"
+          typeof data.error === "string"
+            ? data.error
+            : "コメントの投稿に失敗しました"
         );
       }
 
       setBody("");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "コメントの投稿に失敗しました");
+      setError(
+        err instanceof Error ? err.message : "コメントの投稿に失敗しました"
+      );
     } finally {
       setIsSubmitting(false);
     }
