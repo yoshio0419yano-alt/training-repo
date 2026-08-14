@@ -20,14 +20,7 @@ export function bulkUpdateStatus(
   targetIds: string[],
   newStatus: TaskStatus
 ): Task[] {
-  const targets = tasks.filter((t) => targetIds.includes(t.id));
-
-  // 一見問題なさそうだが、対象タスクのオブジェクトを直接書き換えている。
-  // tasks配列自体は同じオブジェクト参照を持つ要素を含んでいるため、
-  // 呼び出し元が保持している「更新前のタスク一覧」まで書き換わってしまう。
-  targets.forEach((t) => {
-    t.status = newStatus;
-  });
-
-  return tasks;
+  return tasks.map((t) =>
+    targetIds.includes(t.id) ? { ...t, status: newStatus } : t
+  );
 }
