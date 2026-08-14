@@ -4,7 +4,7 @@
   "private": true,
   "description": "Claude Code 実践研修 お題アプリ（チーム向けタスク管理システム）の雛形",
   "scripts": {
-    "dev": "next dev",
+    "dev": "prisma generate && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -18,7 +18,9 @@
     "next": "14.2.35",
     "next-auth": "4.24.7",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.35"
   },
   "devDependencies": {
     "@testing-library/react": "16.0.0",

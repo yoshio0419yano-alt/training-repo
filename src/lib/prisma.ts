@@ -15,7 +15,7 @@ function createClient(): PrismaClient {
   // 型だけを import し、実体は使用時に読み込む。
   // これにより「npm install 時に prisma generate が失敗した」場合でも、
   // アプリの起動自体は妨げられない（DBを使う画面でだけエラーになる）。
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line
   const { PrismaClient: Client } = require("@prisma/client");
   return new Client({
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
